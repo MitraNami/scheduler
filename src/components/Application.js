@@ -1,4 +1,5 @@
-import React, { Fragment, useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios';
 
 import DayList from "components/DayList";
 import "components/Application.scss";
@@ -96,7 +97,7 @@ export default function Application(props) {
       />
       </section>
       <section className="schedule">
-        {/*Map over the appointments*/}
+        {/*Map over the appointments, the last Appointment is for CSS styling*/}
         {[...appointments.map(appointment => 
           <Appointment key={appointment.id} {...appointment} />
         ), <Appointment key="last" time="5pm" />]}
