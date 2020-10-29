@@ -4,33 +4,52 @@ import axios from 'axios';
 import DayList from "components/DayList";
 import "components/Application.scss";
 import Appointment from "components/Appointment";
-import { getAppointmentsForDay } from "../helpers/selectors";
+import { getAppointmentsForDay, getInterview } from "../helpers/selectors";
 
 
 export default function Application(props) {
 
-  //combine the states for day, days, appointments
+  //combine the states
   const [state, setState] = useState({
     day: "Monday",
     days: [],
-    appointments: {}
+    appointments: {},
+    interviewers: {}
   });
 
  
   //updates the state with a new day
   const setDay = day => setState({...state, day})
 
+  // we need to update days, appointments, interviewers parts of the state at the same time
   useEffect(() => {
     Promise.all([
       axios.get("/api/days"),
       axios.get("api/appointments"),
+      axios.get("api/interviewers")
     ]).then(all => {
-      setState(prev => ({...prev, days: all[0].data, appointments: all[1].data }))
+      const [days, appointments, interviewers] = all.map(item => item.data);
+      setState(prev => ({...prev, days, appointments, interviewers}));
     })
   }, []);
 
   //holds a list of appointments for that day
   const dailyAppointments = getAppointmentsForDay(state, state.day);
+
+  //iterate over appointment objs of the day and create Appointment components
+  const schedules = dailyAppointments.map(appointment => {
+    //transfer interview data before passing it as a prop
+    const interview = getInterview(state, appointment.interview);
+
+    return (
+      <Appointment 
+      key={appointment.id} 
+      id={appointment.id}
+      time={appointment.time}
+      interview={interview}
+      />
+    );
+  })
 
   return (
     <main className="layout">
@@ -56,9 +75,7 @@ export default function Application(props) {
       </section>
       <section className="schedule">
         {/*Map over the appointments, the last Appointment is for CSS styling*/}
-        {[...dailyAppointments.map(appointment => 
-          <Appointment key={appointment.id} {...appointment} />
-        ), <Appointment key="last" time="5pm" />]}
+        {[...schedules, <Appointment key="last" time="5pm" />]}
       </section>
     </main>
   );
