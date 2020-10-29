@@ -18,7 +18,7 @@ export default function Appointment(props) {
 
       <Header time={props.time}/>
 
-      {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
+      {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />} {/*to go to CREATE mode when the Empty component is clicked*/}
       {mode === SHOW && (
         <Show
           student={props.interview.student}
@@ -28,7 +28,7 @@ export default function Appointment(props) {
       {mode === CREATE && (
         <Form
           interviewers={[]}
-          onCancel={back}
+          onCancel={back} /*to return to the EMPTY mode when the cancel button is clicked*/
         />
       )}
 
