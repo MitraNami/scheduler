@@ -4,54 +4,8 @@ import axios from 'axios';
 import DayList from "components/DayList";
 import "components/Application.scss";
 import Appointment from "components/Appointment";
+import { getAppointmentsForDay } from "../helpers/selectors";
 
-
-// const appointments = [
-//   {
-//     id: 1,
-//     time: "12pm",
-//   },
-//   {
-//     id: 2,
-//     time: "1pm",
-//     interview: {
-//       student: "Lydia Miller-Jones",
-//       interviewer: {
-//         id: 1,
-//         name: "Sylvia Palmer",
-//         avatar: "https://i.imgur.com/LpaY82x.png",
-//       }
-//     }
-//   },
-//   {
-//     id: 3,
-//     time: "2pm",
-//   },
-//   {
-//     id: 4,
-//     time: "3pm",
-//     interview: {
-//       student: "Mitra Nami",
-//       interviewer: {
-//         id: 2,
-//         name: "Tori Malcolm",
-//         avatar: "https://i.imgur.com/Nmx0Qxo.png",
-//       }
-//     }
-//   },
-//   {
-//     id: 5,
-//     time: "4pm",
-//     interview: {
-//       student: "Kartina Crane",
-//       interviewer: {
-//         id: 4,
-//         name: "Cohana Roy",
-//         avatar: "https://i.imgur.com/FK8V841.jpg",
-//       }
-//     }
-//   }
-// ];
 
 export default function Application(props) {
 
@@ -62,9 +16,7 @@ export default function Application(props) {
     appointments: {}
   });
 
-  //holds a list of appointments for that day
-  const dailyAppointments = [];
-
+ 
   //updates the state with a new day
   const setDay = day => setState({...state, day})
 
@@ -77,7 +29,8 @@ export default function Application(props) {
     })
   }, []);
 
-
+  //holds a list of appointments for that day
+  const dailyAppointments = getAppointmentsForDay(state, state.day);
 
   return (
     <main className="layout">
