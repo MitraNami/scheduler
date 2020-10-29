@@ -20,4 +20,41 @@ const getAppointmentsForDay = (state, day) => {
   return result;
 };
 
-export { getAppointmentsForDay }
+/* returns an object that contains the interview data if it is passed an object that 
+contains an interviewer. getInterview(state, interview)
+interview is an object:
+{
+  student: 'Mitra Nami',
+  interviewer: 2
+} or null
+we want the returned value to be
+{
+  student: 'Mitra Nami',
+  interviewer: {
+    id: 2,
+    name: 'Tori Malcolm',
+    avatar: 'https://i.imgur.com/Nmx0Qxo.png'
+  } or null respectively.
+}
+
+*/
+const getInterview = (state, interview) => {
+  if (interview === null) {
+    return null;
+  }
+  const id = interview.interviewer;
+  const interviewers = state['interviewers']; //an obj containing interviewer objs
+  const interviewer = Object.values(interviewers).find(interviewer => interviewer.id === id);
+  return (
+    {
+      student: interview['student'],
+      interviewer
+    }
+  );
+
+};
+
+
+
+
+export { getAppointmentsForDay, getInterview }
