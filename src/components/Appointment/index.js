@@ -13,6 +13,16 @@ const CREATE = "CREATE";
 export default function Appointment(props) {
 
   const { mode, transition, back } = useVisualMode(props.interview ? SHOW : EMPTY);
+
+  //pass it as prop to Form component
+  const save = (name, interviewer) => {
+    const interview = {
+      student: name,
+      interviewer
+    };
+    props.bookInterview(props.id, interview);
+  }
+
   return (
     <article className="appointment">
 
@@ -29,6 +39,7 @@ export default function Appointment(props) {
         <Form
           interviewers={props.interviewers}
           onCancel={back} /*to return to the EMPTY mode when the cancel button is clicked*/
+          onSave={save} /* to capture the name and interviewer id*/
         />
       )}
 
