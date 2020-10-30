@@ -4,7 +4,7 @@ import axios from 'axios';
 import DayList from "components/DayList";
 import "components/Application.scss";
 import Appointment from "components/Appointment";
-import { getAppointmentsForDay, getInterview } from "../helpers/selectors";
+import { getAppointmentsForDay, getInterview, getInterviewersForDay } from "../helpers/selectors";
 
 
 export default function Application(props) {
@@ -33,6 +33,10 @@ export default function Application(props) {
     })
   }, []);
 
+  //holds a list of the interviewers for that day, it will passed as a prop
+  //to each Appointment of that day
+  const interviewers = getInterviewersForDay(state, state.day);
+
   //holds a list of appointments for that day
   const dailyAppointments = getAppointmentsForDay(state, state.day);
 
@@ -47,9 +51,13 @@ export default function Application(props) {
       id={appointment.id}
       time={appointment.time}
       interview={interview}
+      interviewers={interviewers}
       />
     );
   })
+
+
+
 
   return (
     <main className="layout">
