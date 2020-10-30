@@ -36,7 +36,17 @@ export default function Application(props) {
 
   //pass the function as prop to each Appointment component
   const bookInterview = (id, interview) => {
-    console.log(id, interview);
+    const appointment = {
+      ...state.appointments[id], //create a new appointment object starting with the values copied from the existing appointment
+      interview: {...interview}
+    };
+    //replace the existing record with the matching id with appointment obj created here
+    const appointments = {
+      ...state.appointments,
+      [id] : appointment
+    }
+
+    setState(...state, appointments)
   };
 
   //holds a list of the interviewers for that day, it will passed as a prop
