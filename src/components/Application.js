@@ -46,7 +46,7 @@ export default function Application(props) {
       [id] : appointment
     }
 
-    setState(...state, appointments)
+    setState({...state, appointments})
   };
 
   //holds a list of the interviewers for that day, it will passed as a prop
