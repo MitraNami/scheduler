@@ -10,12 +10,9 @@ const useVisualMode = (initial) => {
   //and puts it in history array
   const transition = (newMode, replace=false) => {
     setMode(newMode);
-    
-    if (replace) {
-      setHistory([...history.slice(0, history.length-1), newMode])
-    } else {
-      setHistory([...history, newMode]);
-    }
+    setHistory(
+      replace ? [...history.slice(0, history.length-1), newMode] : [...history, newMode]
+    );
   };
 
   //sets the mode to the previous item in history array
