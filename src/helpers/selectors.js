@@ -54,7 +54,28 @@ const getInterview = (state, interview) => {
 
 };
 
+// returns an array containing the interviewers objects for the given day
+const getInterviewersForDay = (state, day) => {
+  const days = state['days']; //an array containing day objects
+  if (days.length === 0) {
+    return [];
+  }
+  const intendedDayObj = days.find(dayObj => dayObj.name === day);
+  //if the day is not found interviewerIds will be []
+  const interviewersIds = intendedDayObj ? intendedDayObj['interviewers'] : [];
+  const interviewers = state['interviewers']; 
+
+  const result = Object.values(interviewers).reduce((acc, interviewer) => {
+    if (interviewersIds.indexOf(interviewer.id) !== -1) {
+      acc.push(interviewer);
+    }
+    return acc;
+  }, []);
+
+  return result;
+}
 
 
 
-export { getAppointmentsForDay, getInterview }
+
+export { getAppointmentsForDay, getInterview, getInterviewersForDay }
