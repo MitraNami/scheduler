@@ -4,11 +4,14 @@ import Header from "components/Appointment/Header";
 import Show from "components/Appointment/Show";
 import Empty from "components/Appointment/Empty";
 import Form from "components/Appointment/Form";
+import Status from "components/Appointment/Status";
 import useVisualMode from "../../../src/hooks/useVisualMode";
+
 
 const EMPTY = "EMPTY";
 const SHOW = "SHOW";
 const CREATE = "CREATE";
+const SAVING = "SAVING";
 
 export default function Appointment(props) {
 
@@ -20,6 +23,9 @@ export default function Appointment(props) {
       student: name,
       interviewer
     };
+    //display the SAVING indicator before transition to SHOW mode
+    transition(SAVING);
+
     //Transition to SHOW when the promise returned by props.bookInterview resolves
     props.bookInterview(props.id, interview).then(() => transition(SHOW));
   
@@ -43,6 +49,9 @@ export default function Appointment(props) {
           onCancel={back} /*to return to the EMPTY mode when the cancel button is clicked*/
           onSave={save} /* to capture the name and interviewer id*/
         />
+      )}
+      {mode === SAVING && (
+        <Status message="Saving the appointment!" />
       )}
 
 
