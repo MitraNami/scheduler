@@ -53,8 +53,21 @@ export default function Application(props) {
       )
     .then(() => {
       setState({...state, appointments}) //change the state locally if the PUT request is successful
-    })
+    });
   };
+
+  //pass the function as props to each Appointment component
+  const cancelInterview = (id) => {
+    const appointment = {...state.appointments[id], interview : null};
+    const appointments = {...state.appointments, [id] : appointment};
+
+    return axios.delete(`/api/appointments/${id}`)
+      .then(() => {
+        setState({...state, appointments})
+      });
+  };
+
+
 
   //holds a list of the interviewers for that day, it will passed as a prop
   //to each Appointment of that day
@@ -76,6 +89,7 @@ export default function Application(props) {
       interview={interview}
       interviewers={interviewers}
       bookInterview={bookInterview}
+      cancelInterview={cancelInterview}
       />
     );
   })

@@ -12,6 +12,7 @@ const EMPTY = "EMPTY";
 const SHOW = "SHOW";
 const CREATE = "CREATE";
 const SAVING = "SAVING";
+const DELETING = "DELETING";
 
 export default function Appointment(props) {
 
@@ -29,7 +30,15 @@ export default function Appointment(props) {
     //Transition to SHOW when the promise returned by props.bookInterview resolves
     props.bookInterview(props.id, interview).then(() => transition(SHOW));
   
-  }
+  };
+
+  //pass it as prop to Show component
+  const del = () => {
+    //display the Deleting indicator before transition to EMPTY mode
+    transition(DELETING);
+    //Transition to EMPTY when the promise returned by props.bookInterview resolves
+    props.cancelInterview(props.id).then(() => transition(EMPTY));
+  };
 
   return (
     <article className="appointment">
@@ -41,6 +50,7 @@ export default function Appointment(props) {
         <Show
           student={props.interview.student}
           interviewer={props.interview.interviewer}
+          onDelete={del}
         />
       )}
       {mode === CREATE && (
@@ -53,7 +63,9 @@ export default function Appointment(props) {
       {mode === SAVING && (
         <Status message="Saving the appointment!" />
       )}
-
+      {mode === DELETING && (
+        <Status message="Deleting the appointment!" />
+      )}
 
     </article>
   );
