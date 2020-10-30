@@ -20,8 +20,9 @@ export default function Appointment(props) {
       student: name,
       interviewer
     };
-    props.bookInterview(props.id, interview);
-    transition(SHOW);
+    //Transition to SHOW when the promise returned by props.bookInterview resolves
+    props.bookInterview(props.id, interview).then(() => transition(SHOW));
+  
   }
 
   return (

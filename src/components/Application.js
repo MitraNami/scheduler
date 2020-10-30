@@ -46,7 +46,14 @@ export default function Application(props) {
       [id] : appointment
     }
 
-    setState({...state, appointments})
+    //update the database
+    return axios.put(
+      `/api/appointments/${id}`,
+      {interview}
+      )
+    .then(() => {
+      setState({...state, appointments}) //change the state locally if the PUT request is successful
+    })
   };
 
   //holds a list of the interviewers for that day, it will passed as a prop
