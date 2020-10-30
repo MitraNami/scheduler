@@ -33,6 +33,12 @@ export default function Application(props) {
     })
   }, []);
 
+
+  //pass the function as prop to each Appointment component
+  const bookInterview = (id, interview) => {
+    console.log(id, interview);
+  };
+
   //holds a list of the interviewers for that day, it will passed as a prop
   //to each Appointment of that day
   const interviewers = getInterviewersForDay(state, state.day);
@@ -52,10 +58,10 @@ export default function Application(props) {
       time={appointment.time}
       interview={interview}
       interviewers={interviewers}
+      bookInterview={bookInterview}
       />
     );
   })
-
 
 
 
