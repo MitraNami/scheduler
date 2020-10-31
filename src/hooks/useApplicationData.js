@@ -1,6 +1,16 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
 
+
+const findDay = (state, appointmentId) => {
+  for (let i = 0; i < state.days.length; i++) {
+    if (state.days[i]['appointments'].indexOf(appointmentId) !== -1) {
+      return [state.days[i], i];
+    }
+  }
+};
+
+
 // deals with data management of Application component
 const useApplicationData = () => {
 
@@ -40,13 +50,24 @@ const useApplicationData = () => {
       [id] : appointment
     }
 
+    //
+    const isCreated = state.appointments[id].interview ? false : true;
+
+    //Update the spots
+    const days = [...state.days];
+    if (isCreated) {
+      const [day, index] = findDay(state, id);
+      const newDay = {...day, spots: day.spots - 1};
+      days.splice(index, 1, newDay);
+    }
+
     //update the database
     return axios.put(
       `/api/appointments/${id}`,
       {interview}
       )
     .then(() => {
-      setState({...state, appointments}) //change the state locally if the PUT request is successful
+      setState(prev => ({...prev, appointments, days})) //change the state locally if the PUT request is successful
     });
   };
 
@@ -55,9 +76,15 @@ const useApplicationData = () => {
     const appointment = {...state.appointments[id], interview : null};
     const appointments = {...state.appointments, [id] : appointment};
 
+    //Update the spots
+    const [day, index] = findDay(state, id);
+    const newDay = {...day, spots: day.spots + 1};
+    const days = [...state.days];
+    days.splice(index, 1, newDay);
+
     return axios.delete(`/api/appointments/${id}`)
       .then(() => {
-        setState({...state, appointments})
+        setState(prev => ({...state, appointments, days}))
       });
   };
 
