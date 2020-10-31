@@ -11,7 +11,7 @@ const useVisualMode = (initial) => {
   const transition = (newMode, replace=false) => {
     setMode(newMode);
     setHistory(
-      replace ? [...history.slice(0, history.length-1), newMode] : [...history, newMode]
+      replace ? prev => [...prev.slice(0, prev.length-1), newMode] : prev => [...prev, newMode]
     );
   };
 
@@ -19,7 +19,7 @@ const useVisualMode = (initial) => {
   const back = () => {
     const newHistory = history.length > 1 ? history.slice(0, history.length-1) : history
     setHistory(newHistory);
-    setMode(newHistory[newHistory.length-1])
+    setMode(newHistory[newHistory.length-1]);
     
   };
 
