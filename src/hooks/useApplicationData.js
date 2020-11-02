@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from "react";
 import axios from 'axios';
 
-
+//helper function to set spots
 const findDay = (state, appointmentId) => {
   for (let i = 0; i < state.days.length; i++) {
     if (state.days[i]['appointments'].indexOf(appointmentId) !== -1) {
@@ -10,9 +10,11 @@ const findDay = (state, appointmentId) => {
   }
 };
 
+// action types that will be dispatched
 const SET_DAY = "SET_DAY";
 const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
 const SET_INTERVIEW = "SET_INTERVIEW";
+const SET_SPOTS = "SET_SPOTS";
 
 const reducer = (state, action) => {
   switch(action.type) {
@@ -39,15 +41,36 @@ const reducer = (state, action) => {
       return {...state, appointments};
 
     }
+    case SET_SPOTS: {
+      const {isCreated, id} = action;
+      if (isCreated === false) { //interview is updated, spots won't change
+        return state;
+      }
+      const [day, index] = findDay(state, id);
+      const newDay = {...day, spots: isCreated ? day.spots - 1 : day.spots + 1};
+      // replace day obj at which the interview is booked or deleted with newDay obj
+      const days = state.days.map((day, i) => {
+        if (i === index) {
+          return newDay;
+        }
+        return day;
+      });
+
+      return {...state, days};
+    }
+
     default: {
-      
+      throw new Error(
+        `Tried to reduce with unsupported action type: ${action.type}`
+      );
     }    
   }
 };
 
+
+
 // deals with data management of Application component
 const useApplicationData = () => {
-
 
   const [state, dispatch] = useReducer(reducer, {
     day: "Monday",
@@ -75,53 +98,28 @@ const useApplicationData = () => {
 
   //pass the function as prop to each Appointment component
   const bookInterview = (id, interview) => {
-    // const appointment = {
-    //   ...state.appointments[id], //create a new appointment object starting with the values copied from the existing appointment
-    //   interview: {...interview}
-    // };
-    // //replace the existing record with the matching id with appointment obj created here
-    // const appointments = {
-    //   ...state.appointments,
-    //   [id] : appointment
-    // }
-
-    //
+    // to know if an interview is created or updated
     const isCreated = state.appointments[id].interview ? false : true;
-
-    //Update the spots
-    const days = [...state.days];
-    if (isCreated) {
-      const [day, index] = findDay(state, id);
-      const newDay = {...day, spots: day.spots - 1};
-      days.splice(index, 1, newDay);
-    }
-
-    //update the database
+    //update the database 
     return axios.put(
       `/api/appointments/${id}`,
       {interview}
       )
     .then(() => {
-      //setState(prev => ({...prev, appointments, days})) //change the state locally if the PUT request is successful
-      dispatch({type: SET_INTERVIEW, id, interview})
+      //update the state
+      dispatch({type: SET_INTERVIEW, id, interview});
+      dispatch({type: SET_SPOTS, id, isCreated});
     });
   };
 
   //pass the function as props to each Appointment component
   const cancelInterview = (id) => {
-    // const appointment = {...state.appointments[id], interview : null};
-    // const appointments = {...state.appointments, [id] : appointment};
-
-    //Update the spots
-    const [day, index] = findDay(state, id);
-    const newDay = {...day, spots: day.spots + 1};
-    const days = [...state.days];
-    days.splice(index, 1, newDay);
-
+    //update the database 
     return axios.delete(`/api/appointments/${id}`)
       .then(() => {
-        //setState(prev => ({...state, appointments, days}))
+        //update the state
         dispatch({type: SET_INTERVIEW, interview: null});
+        dispatch({type: SET_SPOTS, id});
       });
   };
 
