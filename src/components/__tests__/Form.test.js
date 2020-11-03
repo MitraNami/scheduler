@@ -1,5 +1,5 @@
 import React from "react";
-import {render, cleanup, fireEvent, getByText} from "@testing-library/react";
+import {render, cleanup, fireEvent, getByText, getByTestId, queryByTestId, queryByText} from "@testing-library/react";
 
 import Form from "components/Appointment/Form";
 
@@ -34,17 +34,27 @@ describe("Form", () => {
     expect(getByText(/student name cannot be blank/i)).toBeInTheDocument();
     expect(onSave).not.toHaveBeenCalled();
   });
-  
-  it("calls onSave function when the name is defined", () => {
+
+  it("can successfully save after trying to submit an empty student name", () => {
     const onSave = jest.fn();
-    const {queryByText, getByText} = render(<Form interviewers={interviewers} name="Lydia Miller-Jones" onSave={onSave} />);
-    const btn = getByText(/Save/i);
+    const {getByText, queryByTestId, queryByText} = render(
+      <Form interviewers={interviewers} onSave={onSave} />
+    );
+    const btn = getByText(/save/i);
     fireEvent.click(btn);
 
-    expect(queryByText(/student name cannot be blank/i)).toBeNull();
-    expect(onSave).toHaveBeenCalledTimes(1);
-    expect(onSave).toHaveBeenCalledWith("Lydia Miller-Jones", null);
-  });
+    expect(getByText(/student name cannot be blank/i)).toBeInTheDocument();
+    expect(onSave).not.toHaveBeenCalled();
 
+    const input = queryByTestId("student-name-input");
+    fireEvent.change(input, {target: {value: "Mitra Nami"}});
+    fireEvent.click(btn);
+
+    const error = queryByText(/student name cannot be blank/i);
+    expect(error).toBeNull();
+    expect(onSave).toHaveBeenCalledTimes(1);
+    expect(onSave).toHaveBeenCalledWith("Mitra Nami", null);
+
+  });
 
 });
