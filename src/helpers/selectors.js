@@ -73,9 +73,18 @@ const getInterviewersForDay = (state, day) => {
   }, []);
 
   return result;
-}
+};
+
+
+//returns the day obj which contains the given appointmentID and its index
+const findDay = (state, appointmentId) => {
+  for (let i = 0; i < state.days.length; i++) {
+    if (state.days[i]['appointments'].indexOf(appointmentId) !== -1) {
+      return [state.days[i], i];
+    }
+  }
+};
 
 
 
-
-export { getAppointmentsForDay, getInterview, getInterviewersForDay }
+export { getAppointmentsForDay, getInterview, getInterviewersForDay, findDay }

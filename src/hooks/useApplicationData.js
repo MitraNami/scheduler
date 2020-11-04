@@ -1,14 +1,8 @@
 import { useEffect, useReducer } from "react";
 import axios from 'axios';
 
-//helper function to set spots
-const findDay = (state, appointmentId) => {
-  for (let i = 0; i < state.days.length; i++) {
-    if (state.days[i]['appointments'].indexOf(appointmentId) !== -1) {
-      return [state.days[i], i];
-    }
-  }
-};
+import {findDay} from '../helpers/selectors';
+
 
 // action types that will be dispatched
 const SET_DAY = "SET_DAY";
