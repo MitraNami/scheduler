@@ -1,15 +1,17 @@
 import React from "react";
+import axios from "axios";
 
 import { render, cleanup, waitForElement, fireEvent,
    prettyDOM, getByText,getByAltText, getAllByTestId, 
    getByPlaceholderText, queryByText, queryByAltText,
-   waitForElementToBeRemoved, toHaveValue,
+   waitForElementToBeRemoved,
    queryByPlaceholderText} from "@testing-library/react";
 
 import Application from "components/Application";
 import { element } from "prop-types";
 
 afterEach(cleanup);
+
 
 describe("Application", () => {
 
@@ -106,7 +108,55 @@ describe("Application", () => {
     const days = getAllByTestId(container, "day");
     const day = days.find(element => queryByText(element, "Monday"));
     expect(getByText(day, "1 spot remaining")).toBeInTheDocument();
-    
+  });
+
+
+  it("shows the save error when failing to save an appointment", async() => {
+    axios.put.mockRejectedValueOnce();
+
+    const {container, debug} = render(<Application />);
+    await waitForElement(() => getByText(container, "Archie Cohen"));
+
+    const appointments = getAllByTestId(container, "appointment");
+    const appointment = appointments[0];
+
+    fireEvent.click(getByAltText(appointment, "Add"));
+    const input = getByPlaceholderText(appointment, /Enter Student Name/i);
+    fireEvent.change(input, {target: {value: "Mitra Nami"}});
+    fireEvent.click(getByAltText(appointment, "Sylvia Palmer"));
+    fireEvent.click(getByText(appointment, "Save"));
+
+    expect(getByText(appointment, "Saving")).toBeInTheDocument();
+  
+    await waitForElementToBeRemoved(() => getByText(appointment, "Saving"));
+
+    expect(getByText(appointment, /Could not save the appointment./i)).toBeInTheDocument();
+
+    fireEvent.click(queryByAltText(appointment, "Close"));
+
+    expect(getByAltText(appointment, "Add")).toBeInTheDocument();
+  });
+
+
+  it("shows the delete error when failing to delete an existing appointment", async() => {
+    axios.delete.mockRejectedValueOnce();
+
+    const {container, debug} = render(<Application />);
+    await waitForElement(() => getByText(container, "Archie Cohen"));
+
+    const appointments = getAllByTestId(container, "appointment");
+    const appointment = appointments.find(element => queryByText(element, "Archie Cohen"));
+
+    fireEvent.click(queryByAltText(appointment, "Delete"));
+    fireEvent.click(getByText(appointment, "Confirm"));
+
+    await waitForElementToBeRemoved(() => getByText(appointment, "Deleting"));
+
+    expect(getByText(appointment, /Could not delete the appointment/i)).toBeInTheDocument();
+
+    fireEvent.click(queryByAltText(appointment, "Close"));
+
+    expect(getByText(appointment, "Archie Cohen")).toBeInTheDocument();
   });
 
 });
