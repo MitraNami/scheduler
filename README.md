@@ -1,4 +1,6 @@
-# Interview Scheduler
+# Interview Scheduler Project
+
+Interview scheduler is a client application built with Create React App. It allows a student to book and manage an interview with a mentor.
 
 ## Setup
 
@@ -21,3 +23,17 @@ npm test
 ```sh
 npm run storybook
 ```
+
+## Dependencies
+
+* react
+* react-dom
+* react-scripts
+* axios
+* classnames
+
+## Final Product
+
+
+
+
