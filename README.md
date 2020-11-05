@@ -35,5 +35,9 @@ npm run storybook
 ## Final Product
 
 
+!["Booking an interview appointment"](https://github.com/MitraNami/scheduler/blob/master/docs/book_interview.png?raw=true)
 
+!["Schedule of Wednesday"](https://github.com/MitraNami/scheduler/blob/master/docs/wed_schedule.png?raw=true)
+
+!["Deleting an interview appointment"](https://github.com/MitraNami/scheduler/blob/master/docs/delete_interview.png?raw=true)
 
